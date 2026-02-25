@@ -1,0 +1,23 @@
+# Required for building some packages (e.g. pulse2percept) on Python 3.12+
+setuptools>=65.0.0
+
+numpy>=1.21.0
+opencv-python>=4.5.0
+torch>=2.0.0
+torchvision>=0.15.0
+pillow>=8.0.0
+pydantic>=1.10.0
+pyyaml>=6.0
+tqdm>=4.64.0
+matplotlib>=3.5.0
+scipy>=1.8.0
+streamlit>=1.20.0
+
+# HuggingFace Transformers for CLIP and Depth Anything
+transformers>=4.35.0
+ultralytics>=8.0.0
+# Plausible phosphene simulation (optional). If install fails on Python 3.13:
+#   pip install setuptools
+#   pip install pulse2percept
+# Or use a Python 3.11/3.12 environment.
+pulse2percept>=0.9.0
