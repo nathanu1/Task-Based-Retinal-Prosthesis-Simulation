@@ -173,7 +173,7 @@ class PhospheneEncoderTool:
             fusion_result = self.fusion.fuse_maps(
                 segmentation=perception_results['segmentation'],
                 saliency=perception_results['saliency'],
-                motion=perception_results['motion_magnitude'],
+                motion_magnitude=perception_results['motion_magnitude'],
                 task_params=task_params,
                 class_names=class_names
             )

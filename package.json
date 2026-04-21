@@ -1,0 +1,21 @@
+{
+  "name": "task-based-retinal-prosthesis-simulation",
+  "version": "1.0.0",
+  "description": "Prosthetic vision simulation that translates **images and video** into phosphene representations. Uses Dynaphos (pulse2percept) for biologically plausible cortical phosphene simulation, plus YOLO detection, DeepLab V3 segmentation, saliency, and edge detection.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nathanu1/Task-Based-Retinal-Prosthesis-Simulation.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/nathanu1/Task-Based-Retinal-Prosthesis-Simulation/issues"
+  },
+  "homepage": "https://github.com/nathanu1/Task-Based-Retinal-Prosthesis-Simulation#readme"
+}

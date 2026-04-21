@@ -55,7 +55,7 @@ class CorticalPhospheneSimulator:
         self.model.build()
 
     def simulate_from_grid(self, stim_grid: np.ndarray, output_size=(256, 256), as_uint8=True) -> np.ndarray:
-        electrode_names = [e.name for e in self.implant.electrodes]
+        electrode_names = list(self.implant.electrodes.keys())
         amp_dict = _stim_grid_to_cortical_currents(stim_grid, electrode_names)
         stim_dict = amp_dict
         if BiphasicPulseTrain is not None:
@@ -67,6 +67,8 @@ class CorticalPhospheneSimulator:
         try:
             percept = self.model.predict_percept(self.implant, stim_dict)
         except Exception:
+            percept = None
+        if percept is None or not hasattr(percept, 'data'):
             from PIL import Image
             out = (np.clip(stim_grid, 0, 1) * 255).astype(np.uint8)
             img = Image.fromarray(out).resize((output_size[1] if output_size else 256, output_size[0] if output_size else 256), Image.BILINEAR)

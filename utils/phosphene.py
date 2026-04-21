@@ -63,7 +63,7 @@ def _stim_grid_to_electrode_currents(stim_grid: np.ndarray, implant: object) -> 
     resized = img.resize((ARGUS_II_COLS, ARGUS_II_ROWS), Image.BILINEAR)
     grid_6x10 = np.array(resized, dtype=np.float64) / 255.0
     currents_flat = np.clip(grid_6x10.flatten(), 0.0, 1.0) * MAX_CURRENT_MICROAMPS
-    electrode_names = [e.name for e in implant.electrodes]
+    electrode_names = list(implant.electrodes.keys())
     n = min(len(electrode_names), len(currents_flat))
     return {name: float(currents_flat[i]) if i < n else 0.0 for i, name in enumerate(electrode_names)}
 
@@ -109,6 +109,10 @@ class PhospheneSimulator:
             raise ImportError("pulse2percept is required")
         stim_dict = _stim_grid_to_electrode_currents(stim_grid, self.implant)
         percept = self.model.predict_percept(self.implant, stim_dict)
+        if percept is None or not hasattr(percept, 'data'):
+            h, w = (output_size if output_size else (256, 256))
+            blank = np.zeros((h, w), dtype=np.float64)
+            return (blank * 255).astype(np.uint8) if as_uint8 else blank
         out = np.asarray(percept.data, dtype=np.float64)
         pmin, pmax = out.min(), out.max()
         out = (out - pmin) / (pmax - pmin + 1e-8) if pmax - pmin > 1e-8 else np.clip(out, 0, 1)
