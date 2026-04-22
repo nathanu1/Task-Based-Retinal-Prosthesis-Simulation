@@ -1,0 +1,26 @@
+# Linear-inspired base theme for the Retinal Prosthesis Workbench.
+#
+# Pass 2 design notes
+# -------------------
+# - Light, calm surface palette: near-white background, soft secondary
+#   surface for the sidebar / cards.
+# - Single restrained accent (cool indigo) for the primary action color.
+# - System font stack so type renders crisply on every OS without
+#   shipping a webfont.
+# - Custom CSS in app.py (see _inject_theme) handles the rest:
+#   tighter type scale, subtle 1px borders, tab polish, metric polish.
+
+[theme]
+base = "light"
+primaryColor = "#5B6CFF"
+backgroundColor = "#FBFBFD"
+secondaryBackgroundColor = "#F3F4F8"
+textColor = "#0E1116"
+font = "sans serif"
+
+[client]
+toolbarMode = "minimal"
+showErrorDetails = true
+
+[server]
+runOnSave = true
