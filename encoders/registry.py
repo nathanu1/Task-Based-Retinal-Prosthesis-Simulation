@@ -26,12 +26,14 @@ from .dots_backend import DotsBackend
 from .toolkit_backend import ToolkitBackend
 from .p2p_retinal_backend import P2PRetinalBackend
 from .dynaphos_backend import DynaphosBackend
+from .learned_backend import LearnedEncoderBackend
 from .base import PhospheneBackend
 
 # Canonical ordered list of backend display names
 BACKEND_NAMES: List[str] = [
     "Dots Baseline",
     "Toolkit Pipeline",
+    "Learned Encoder (E2E)",
     "p2p Retinal (Argus II)",
     "Dynaphos Cortical (p2p)",
 ]
@@ -40,6 +42,7 @@ BACKEND_NAMES: List[str] = [
 _BACKENDS: Dict[str, PhospheneBackend] = {
     "Dots Baseline": DotsBackend(),
     "Toolkit Pipeline": ToolkitBackend(),
+    "Learned Encoder (E2E)": LearnedEncoderBackend(),
     "p2p Retinal (Argus II)": P2PRetinalBackend(),
     "Dynaphos Cortical (p2p)": DynaphosBackend(),
 }

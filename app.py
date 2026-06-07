@@ -687,6 +687,8 @@ def _make_backend_params(backend_name: str, ui: Dict[str, Any]) -> Dict[str, Any
         params.update(ui["p2p_params"])
     elif backend_name == "Dynaphos Cortical (p2p)":
         params.update(ui["dynaphos_params"])
+    elif backend_name == "Learned Encoder (E2E)":
+        params.update(ui["learned_params"])
     return params
 
 
@@ -755,6 +757,7 @@ def _render_advanced_for_backend(
     dots_params: Dict[str, Any],
     p2p_params: Dict[str, Any],
     dynaphos_params: Dict[str, Any],
+    learned_params: Dict[str, Any],
 ) -> None:
     """Render only the parameter group(s) relevant to *backend_name*."""
     preset = TASK_PRESETS.get(task_mode)
@@ -825,6 +828,35 @@ def _render_advanced_for_backend(
             help="How to convert the image to a cortical stimulation pattern.",
         )
 
+    elif backend_name == "Learned Encoder (E2E)":
+        st.markdown("**Learned encoder — checkpoint**")
+        from encoders.learned_backend import available_checkpoints
+        ckpts = available_checkpoints()
+        if not ckpts:
+            st.caption("No trained checkpoint found under `runs/paper_eval/`.")
+        else:
+            labels = [label for label, _ in ckpts]
+            learned_params["learned_ckpt"] = st.selectbox(
+                "Trained model", labels, index=0,
+                help="End-to-end trained encoder. MoE picks an expert per image (adaptive candidate).",
+            )
+            learned_params["learned_renderer"] = st.selectbox(
+                "Renderer",
+                ["differentiable", "argus_ii"],
+                index=0,
+                format_func=lambda r: {
+                    "differentiable": "Differentiable simulator (training)",
+                    "argus_ii": "pulse2percept Argus II",
+                }.get(r, r),
+                help="Render the learned stimulation grid with the training "
+                     "simulator, or feed it into the Argus II retinal model.",
+            )
+            if learned_params.get("learned_renderer") == "argus_ii":
+                learned_params["p2p_model"] = st.selectbox(
+                    "Argus II model", ["axon_map", "scoreboard"], index=0,
+                    key="learned_p2p_model",
+                )
+
     else:
         st.caption("This backend has no advanced settings.")
 
@@ -891,6 +923,7 @@ def render_sidebar() -> Dict[str, Any]:
         dots_params: Dict[str, Any] = {}
         p2p_params: Dict[str, Any] = {}
         dynaphos_params: Dict[str, Any] = {}
+        learned_params: Dict[str, Any] = {}
         show_diagnostics = False
         show_candidate_table = False
 
@@ -907,6 +940,7 @@ def render_sidebar() -> Dict[str, Any]:
                 st.caption(name)
                 _render_advanced_for_backend(
                     name, task_mode, dots_params, p2p_params, dynaphos_params,
+                    learned_params,
                 )
 
             st.divider()
@@ -931,6 +965,7 @@ def render_sidebar() -> Dict[str, Any]:
         "dots_params": dots_params,
         "p2p_params": p2p_params,
         "dynaphos_params": dynaphos_params,
+        "learned_params": learned_params,
         "mask_kernel": int(dots_params.get("mask_kernel", 7)),
         "target_class": str(dots_params.get("target_class", "auto")),
         "show_candidate_table": show_candidate_table,

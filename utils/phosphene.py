@@ -78,7 +78,10 @@ def generate_phosphene_image(stim_20x20: np.ndarray, implant=None, model=None, s
         model = AxonMapModel()
         model.build()
     stim_dict = _stim_grid_to_electrode_currents(stim_20x20, implant)
-    percept = model.predict_percept(implant, stim_dict)
+    # pulse2percept's predict_percept reads the stimulus from implant.stim;
+    # its second positional arg is t_percept, NOT the stimulus.
+    implant.stim = stim_dict
+    percept = model.predict_percept(implant)
     percept_data = percept.data
     if save_path:
         from PIL import Image
@@ -108,12 +111,19 @@ class PhospheneSimulator:
         if not PULSE2PERCEPT_AVAILABLE:
             raise ImportError("pulse2percept is required")
         stim_dict = _stim_grid_to_electrode_currents(stim_grid, self.implant)
-        percept = self.model.predict_percept(self.implant, stim_dict)
+        # predict_percept reads the stimulus from implant.stim; the second
+        # positional argument is t_percept, not the stimulus dict.
+        self.implant.stim = stim_dict
+        percept = self.model.predict_percept(self.implant)
         if percept is None or not hasattr(percept, 'data'):
             h, w = (output_size if output_size else (256, 256))
             blank = np.zeros((h, w), dtype=np.float64)
             return (blank * 255).astype(np.uint8) if as_uint8 else blank
         out = np.asarray(percept.data, dtype=np.float64)
+        # pulse2percept returns (Y, X, T); collapse the trailing time axis so
+        # downstream PIL/cv2 ops receive a plain 2-D image.
+        if out.ndim == 3:
+            out = out[..., 0]
         pmin, pmax = out.min(), out.max()
         out = (out - pmin) / (pmax - pmin + 1e-8) if pmax - pmin > 1e-8 else np.clip(out, 0, 1)
         if output_size:
