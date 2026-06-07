@@ -14,3 +14,13 @@ dataset/
 outputs/
 *.pt
 *.pth
+
+# Training run scratch (datasets, caches, smoke/temp runs)
+runs/**/data/
+runs/moving_mnist/
+runs/smoke_moe/
+runs/tmpdata/
+runs/eval_data/
+
+# Nested duplicate project copy (do not track)
+/Task-Based-Retinal-Prosthesis-Simulation/
